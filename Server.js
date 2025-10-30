@@ -30,16 +30,27 @@ app.use("/uploads", express.static(uploadDir));
 app.use("/api/courses", courseRoutes);
 app.use("/api/user", userRoutes);
 
-// ✅ MongoDB Connection
+// Simple test route
+app.get("/test", (req, res) => {
+  res.json({ message: "Backend is working!" });
+});
+
+// MongoDB URL
 const DB_URL =
   process.env.DB_URL ||
   "mongodb+srv://asquare:1234567ck@cluster0.we6neql.mongodb.net/Asquare";
 
-mongoose
-  .connect(DB_URL)
-  .then(() => console.log("✅ MongoDB Atlas Connected"))
-  .catch((err) => console.error("❌ MongoDB Connection Error:", err));
-
-// ✅ Dynamic Port for Deployment
+// Dynamic port
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+
+// Connect MongoDB then start server
+mongoose
+  .connect(DB_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log("✅ MongoDB Atlas Connected");
+    app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+  })
+  .catch((err) => console.error("❌ MongoDB Connection Error:", err));
