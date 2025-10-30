@@ -3,13 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "backend/server.js",
+  "type": "module",
   "scripts": {
     "start": "node backend/server.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "module",
   "dependencies": {
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
