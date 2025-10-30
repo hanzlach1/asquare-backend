@@ -3,8 +3,12 @@ import mongoose from "mongoose";
 import cors from "cors";
 import path from "path";
 import fs from "fs";
+import dotenv from "dotenv";
 import courseRoutes from "./Routes/courseRoutes.js";
 import userRoutes from "./Routes/userRoutes.js";
+
+// Load .env variables
+dotenv.config();
 
 const app = express();
 
@@ -35,22 +39,25 @@ app.get("/test", (req, res) => {
   res.json({ message: "Backend is working!" });
 });
 
-// MongoDB URL
-const DB_URL =
-  process.env.DB_URL ||
-  "mongodb+srv://asquare:1234567ck@cluster0.we6neql.mongodb.net/Asquare";
+// MongoDB Connection
+const DB_URL = process.env.DB_URL;
 
-// Dynamic port
+if (!DB_URL) {
+  console.error("❌ DB_URL is missing in environment variables!");
+  process.exit(1); // stop server if DB_URL missing
+}
+
+// Dynamic Port
 const PORT = process.env.PORT || 5000;
 
 // Connect MongoDB then start server
 mongoose
-  .connect(DB_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(DB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log("✅ MongoDB Atlas Connected");
     app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
   })
-  .catch((err) => console.error("❌ MongoDB Connection Error:", err));
+  .catch((err) => {
+    console.error("❌ MongoDB Connection Error:", err);
+    process.exit(1); // stop server if DB connection fails
+  });
